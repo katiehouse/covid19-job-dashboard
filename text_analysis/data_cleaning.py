@@ -50,6 +50,10 @@ def data_cleaning():
 
     return(full_text)
 
+########################################################
+# from TFIGF implementation article
+# https://towardsdatascience.com/tfidf-for-piece-of-text-in-python-43feccaa74f8
+########################################################
 
 def remove_string_special_characters(s):
     stripped = re.sub('[^\w\s]', '', s)
@@ -60,12 +64,12 @@ def remove_string_special_characters(s):
     return(stripped)
 
 
-def get_doc(sent):
+def get_doc(text_sents_clean):
     doc_info = []
     i = 0
     for sent in text_sents_clean:
         i += 1
-        count = count_words(full_text)
+        count = count_words(sent)
         temp = {'doc_id' : i, 'doc_length' : count}
         doc_info.append(temp)
     return(doc_info)
@@ -83,6 +87,7 @@ def create_freq_dict(sents):
     for sent in sents:
         i += 1
         freq_dict = {}
+        words = word_tokenize(sent)
         for word in words:
             if word in freq_dict:
                 freq_dict[word] += 1
@@ -113,7 +118,7 @@ def computeIDF(doc_info, freqDict_list):
         counter += 1
         for k in dict['freq_dict'].keys():
             count = sum([k in tempDict['freq_dict'] for tempDict in freqDict_list])
-            temp = {'doc_id' : counter, 'IDF_score' : math.log(len(doc_info/count)), 'key' : k}
+            temp = {'doc_id' : counter, 'IDF_score' : math.log(len(doc_info)/count), 'key' : k}
             IDF_scores.append(temp)
 
     return(IDF_scores)
@@ -122,7 +127,7 @@ def computeTFIDF(TF_scores, IDF_scores):
     TFIDF_scores = []
     for j in IDF_scores:
         for i in TF_scores:
-            if j['key'] -- i['key'] and j['doc_id'] == i['doc_id']:
+            if j['key'] == i['key'] and j['doc_id'] == i['doc_id']:
                 temp = {'doc_id' : j['doc_id'],
                         'TFIDF_score' : j['IDF_score']*i['TF_score'],
                         'key' : i['key']}
@@ -131,17 +136,20 @@ def computeTFIDF(TF_scores, IDF_scores):
 
 
 def tf_igf(full_text):
-    text_sents = sent_tokenize(full_text)
+    text_sents = word_tokenize(full_text)
     text_sents_clean = [remove_string_special_characters(s) for s in text_sents]
     doc_info = get_doc(text_sents_clean)
     freqDict_list = create_freq_dict(text_sents_clean)
     TF_scores = computeTF(doc_info, freqDict_list)
     IDF_scores = computeIDF(doc_info, freqDict_list)
     TFIDF_scores = computeTFIDF(TF_scores, IDF_scores)
+    return(TFIDF_scores)
      
 
 def main():
-    data_cleaning()
+    full_text = data_cleaning()
+    tf_igf_dict = tf_igf(full_text)
+    print(tf_igf_dict)
 
 
 if __name__ == "__main__":
