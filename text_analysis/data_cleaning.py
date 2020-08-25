@@ -5,6 +5,8 @@ from nltk.tokenize import word_tokenize
 import re
 import math
 import string
+from nltk.stem import WordNetLemmatizer
+from nltk.stem import PorterStemmer
 
 def read_data():
     with open('text_analysis/indeed.json') as f:
@@ -42,11 +44,25 @@ def rm_stop_words(full_text):
     
     return(full_text)
 
+def stem_and_lemmatize(full_text):
+    ps = PorterStemmer()
+    lemmatizer = WordNetLemmatizer()
+    full_text_tokenized = word_tokenize(full_text)
+    temp1 = []
+    for word in full_text_tokenized:
+        word = ps.stem(word)
+        word = lemmatizer.lemmatize(word)
+        temp1.append(word)
+    full_text = ''
+    for word in temp1:
+        full_text = full_text + word + ' '
+    return(full_text)
 
 def data_cleaning():
     full_text = read_data()
     full_text = string_clean(full_text)
     full_text = rm_stop_words(full_text)
+    full_text = stem_and_lemmatize(full_text)
 
     return(full_text)
 
