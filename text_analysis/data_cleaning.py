@@ -19,9 +19,11 @@ def line_break(full_text):
 
 
 def to_lower(full_text):
+    full_text2 = []
     for row in full_text:
         row = row.lower()
-    
+        full_text2.append(row)
+    full_text = pd.DataFrame(full_text2)
     return(full_text)
 
 
@@ -33,21 +35,24 @@ def tokenize_row(row):
     for w in word_tokens:
         if w not in stop_words:
             filtered_sentence.append(w)
-    row = filtered_sentence
+    row = pd.DataFrame(filtered_sentence)
     
     return(row)
 
 
 def rm_stop_words(full_text):
+    full_text2 = []
     for row in full_text:
         row = tokenize_row(row)
+        full_text2.append(row)
+    full_text = pd.DataFrame(full_text2)
     return(full_text)
 
 def data_cleaning():
     full_text = read_data()
     full_text = line_break(full_text)
     full_text = to_lower(full_text)
-    full_text = rm_stop_words(full_text)
+    #full_text = rm_stop_words(full_text)
     print(full_text.head(5))
 
 
