@@ -23,7 +23,7 @@ def read_data():
 def string_clean(full_text):
     string.punctuation = string.punctuation + "–’"
     full_text = full_text.replace('\n', ' ').lower().translate(
-        str.maketrans('', '', string.punctuation))
+        str.maketrans(string.punctuation, ' '*len(string.punctuation)))
     
     return(full_text)
 
