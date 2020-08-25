@@ -3,15 +3,168 @@
 {% load bootstrap4 %}
 
 {% block bootstrap4_content %}
+<section class="jumbotron text-center">
     <div class="container">
-        <h1>{% block title %}(no title){% endblock %}</h1>
+      <h1>Job Lens</h1>
+      <p class="lead text-muted">Detangling the job web</p>
 
-        <p>
-        </p>
-
-        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
-
-        {% block content %}(no content){% endblock %}
+<!-- Query section -->
+<form class="needs-validation" novalidate>
+  <div class="row mb-3">
+    <div class="col-md-4 themed-grid-col">
+    <input type="text" class="form-control" id="location" placeholder="Location" value="" required></div>
+    <div class="col-md-4 themed-grid-col">
+    <input type="text" class="form-control" id="jobTitle" placeholder="" value="Job Title" required></div>
+    <div class="col-md-4 themed-grid-col"><button type="button" class="btn btn-primary">Submit</button></div>
+  </div>
+</form>
     </div>
+</section>
 
+<!-- Skills section -->
+<section>
+  <div class="container">
+    <div class="alert alert-secondary" role="alert">
+      <h4 class="alert-heading">Top Skills in Demand!</h4>
+<span class="badge badge-pill badge-secondary">Pandas <span class="badge badge-light">18</span> </span>
+<span class="badge badge-pill badge-secondary">PyTorch <span class="badge badge-light">7</span> </span>
+<span class="badge badge-pill badge-secondary">TensorFlow <span class="badge badge-light">6</span> </span>
+<span class="badge badge-pill badge-secondary">R <span class="badge badge-light">4</span></span>
+<span class="badge badge-pill badge-secondary">Tableau <span class="badge badge-light">2</span> </span>
+<span class="badge badge-pill badge-secondary">Python <span class="badge badge-light">1</span> </span>
+<span class="badge badge-pill badge-secondary">Machine Learning <span class="badge badge-light">1</span></span>
+<span class="badge badge-pill badge-secondary">Statistics <span class="badge badge-light">1</span></span>
+<span class="badge badge-pill badge-secondary">Blockchain <span class="badge badge-light">1</span></span>
+<hr>
+  <p class="mb-0">Based on the 532 jobs matching your criteria</p>
+</div>
+</div>
+</section>
+
+<!-- Job Postings -->
+<section>
+<div class="album py-5 bg-light">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <p class="card-text">Data Scientist</p>
+              <p>Amherst, MA</p>
+              <p>Our Data Science Development Program offers a unique industry leading program that combines high-impact industry experience with hands-on training, mentorship, and coursework.</p>
+              <div class="d-flex justify-content-between align-items-center">
+
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View Job</button>
+                <small class="text-muted">1 day ago</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <p class="card-text">Data Analyst</p>
+              <p>Boston, MA</p>
+              <p>Each member of the DSDP completes a blended curriculum of Five College coursework, filling-in something, in-house workshops led by local faculty, online courses, and graduate-level study..... </p>
+              <div class="d-flex justify-content-between align-items-center">
+
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View Job</button>
+                <small class="text-muted">10 days ago</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <p class="card-text">Data Engineer</p>
+              <p>Los Angeles, CA</p>
+              <p>Participants in the DSDP have the opportunity to work across domains in the data science team, gaining exposure to project work in finance, marketing, product development, security and more...... </p>
+              <div class="d-flex justify-content-between align-items-center">
+
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View Job</button>
+                <small class="text-muted">2 days ago</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View Job</button>
+                <small class="text-muted">5 days ago</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View Job</button>
+                <small class="text-muted">1 day ago</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View Job</button>
+                <small class="text-muted">15 days ago</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View Job</button>
+                <small class="text-muted">13 days ago</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View Job</button>
+                <small class="text-muted">1 day ago</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View Job</button>
+                <small class="text-muted">4 days ago</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </section>
 {% endblock %}
