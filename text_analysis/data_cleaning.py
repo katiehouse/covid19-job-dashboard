@@ -23,6 +23,23 @@ def read_data():
 
 
 def string_clean(full_text):
+    words = word_tokenize(full_text)
+    temp1 = []
+    for w in words:
+        if w.isupper():
+            temp1.append(w)
+        else:
+            temp2 = []
+            for i in range(len(w)):
+                if w[i].isupper():
+                    temp2.append(' ' + w[i])
+                else:
+                    temp2.append(w[i])
+            temp2 = ''.join(temp2)
+            temp1.append(temp2)
+    full_text = ''
+    for word in temp1:
+        full_text = full_text + word + ' '
     string.punctuation = string.punctuation + "–’"
     full_text = full_text.replace('\n', ' ').lower().translate(
         str.maketrans(string.punctuation, ' '*len(string.punctuation)))
