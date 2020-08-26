@@ -31,6 +31,7 @@ psycopg2==2.8.5
 pycodestyle==2.6.0
 pylint==2.6.0
 python-dateutil==2.8.1
+python-dotenv==0.14.0
 pytz==2020.1
 PyYAML==3.13
 ratelim==0.1.6
