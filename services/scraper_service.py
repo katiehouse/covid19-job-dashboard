@@ -2,7 +2,7 @@
 import bs4
 from bs4 import BeautifulSoup
 import requests
-import requests
+import re
 import pandas as pd
 import time
 
@@ -25,7 +25,7 @@ def extract_company(div):
 
 
 # extract job salary
-def extract_salary(div):
+def extract_salary(div, full_text):
     try:
         return div.find("nobr").text
     except:
@@ -33,7 +33,12 @@ def extract_salary(div):
             span = div.find_all(name="span", attrs={"class": "salaryText"})
             return span[0].get_text()
         except:
-            return "NOT_FOUND"
+            try:
+                salary_text = full_text.find(text=re.compile("(\$)"), recursive=True)
+                salary = re.search("\$[\d\.\,]+ to \$[\d\.\,]+ | \$[\d\.\,]+ - \$[\d\.\,]+, \$[\d\.\,]+/[\w]+ | \$[\d\.\,]+ per [\w]+", salary_text)
+                return salary.group(0)
+            except:
+                return "NOT_FOUND"
     return "NOT_FOUND"
 
 
@@ -55,14 +60,48 @@ def extract_job_title(div):
     return "NOT_FOUND"
 
 
-# extract jd summary
-def extract_summary(link):
-    page = requests.get(link)
-    soup = get_soup(page.text)
-    spans = soup.find_all(name="div", attrs={"id": "jobDescriptionText"})
-    for span in spans:
-        return span.text.strip()
+# extract job summary
+def extract_summary(full_text):
+    #assuming what we want will be early on
+    try:
+        summary_header = full_text.find("b", text=re.compile("(Summary|Description|Position|Role|Purpose|Overview)"), recursive=True)
+        summary = ""
+        if summary_header:
+            #recursively search for next sibling, then parent and parents next siblig and so on
+            return recursive_summary(summary_header)
+        # if no key words are find, just return the first paragraph
+        else:
+            summary = full_text.findAll("p")
+            index = 0
+            while len(summary[index].text.split(" "))<10:
+                index+=1
+                if index < len(summary):
+                    index-=1
+                    break
+            return summary[index].text
+    except:
+        return "NOT_FOUND"
+
     return "NOT_FOUND"
+
+
+def recursive_summary (summary_header):
+    summary = ""
+    if summary_header.nextSibling:
+        try:
+            summary = summary_header.nextSibling.text
+            #print("first try:", summary)
+        except Exception as e:
+            pass
+    if summary.replace("/n", "").replace(" ", "") == "" or len(summary.split(" "))<10 :
+        try:
+        #    print("nextSibling", summary_header.nextSibling)
+            return recursive_summary(summary_header.nextSibling)
+        except:
+        #    print("parent", summary_header.parent)
+            return recursive_summary(summary_header.parent)
+    else:
+        return summary
 
 
 # extract link of job description
@@ -85,26 +124,16 @@ def extract_date(div):
 
 
 # extract full job description from link
-def extract_fulltext(url):
+def extract_fulltext(link):
     try:
-        page = requests.get("http://www.indeed.com" + url)
-        soup = BeautifulSoup(page.text, "lxml", from_encoding="utf-8") # got rid of warning: ("You provided Unicode markup but also provided a value for from_encoding. Your from_encoding will be ignored.")
-        page.close()
-        spans = soup.findAll("div", attrs={"class": "jobsearch-jobDescriptionText"})
+        page = requests.get(link)
+        soup = get_soup(page.text)
+        spans = soup.find_all(name="div", attrs={"id": "jobDescriptionText"})
         for span in spans:
-            return span.text.strip()
+            return span
     except:
         return "NOT_FOUND"
     return "NOT_FOUND"
-
-
-# commented this out so we can use regular logs
-# write logs to file
-# def write_logs(text):
-#     # print(text + '\n')
-#     f = open("log.txt", "a")
-#     f.write(text + "\n")
-#     f.close()
 
 
 def scrape_indeed(input_dict, max_results_per_city = 2000):
@@ -141,10 +170,10 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
                 "company_name",
                 "location",
                 "link",
-                "summary",
-                "salary",
                 "date",
                 "full_text",
+                "salary",
+                "summary"
             ]
         )
 
@@ -155,7 +184,6 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
             + str(city)
             + "&radius=10&sort=date"
         )
-        print(link)
         # get dom
         page = requests.get(link)
 
@@ -166,10 +194,10 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
         soup = get_soup(page.text)
         page.close()
         searchCountpages = soup.find_all(name="div", attrs={"id": "searchCountPages"})
-        print(searchCountpages)
 
         total_results = searchCountpages[0].get_text().strip().split(" ")[3]
         total_results = int(total_results.replace(",", ""))
+        print("titalresults:", total_results)
 
         if total_results > max_results_per_city:
             total_results = max_results_per_city
@@ -233,39 +261,22 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
                 link = extract_link(div)
                 job_post.append(link)
 
-                # grabbing summary text
-                job_post.append(extract_summary(link))
-
-                # grabbing salary
-                job_post.append(extract_salary(div))
-
                 # grabbing date
                 job_post.append(extract_date(div))
 
                 # grabbing full_text
-                job_post.append(extract_fulltext(link))
+                full_text = extract_fulltext(link)
+                job_post.append(full_text.text.strip())
+
+                # grabbing salary
+                job_post.append(extract_salary(div, full_text))
+
+                # grabbing summary text
+                job_post.append(extract_summary(full_text))
 
                 # appending list of job post info to dataframe at index num
                 df.loc[num] = job_post
 
-            # debug add
-            # write_logs(
-            #     ("Completed =>")
-            #     + "\t"
-            #     + city
-            #     + "\t"
-            #     + job_qry
-            #     + "\t"
-            #     + str(cnt)
-            #     + "\t"
-            #     + str(start)
-            #     + "\t"
-            #     + str(time.time() - startTime)
-            #     + "\t"
-            #     + ("file_" + str(file))
-            # )
-
-        # saving df as a local csv file
         # will save to the database instead of json
         # df.to_json("indeed.json", orient='records')
         # df.to_csv("jobs_" + str(file) + ".csv", encoding="utf-8")
@@ -273,27 +284,22 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
 
     else:
 
-        # debug add
-        # write_logs(
-        #     ("Skipped =>")
-        #     + "\t"
-        #     + city
-        #     + "\t"
-        #     + job_qry
-        #     + "\t"
-        #     + str(-1)
-        #     + "\t"
-        #     + str(-1)
-        #     + "\t"
-        #     + str(time.time() - startTime)
-        #     + "\t"
-        #     + ("file_" + str(file))
-        # )
-
         # increment file
         file = file + 1
 
-# commented this out and moved everything to one generic scraper_service
+####################################
+# COMMENT OUT EVERYTHING BELOW
+# (used for local dev)
+####################################
+
+# #funct to see output-- saved in directory that repo is in.
+# def write_logs(text):
+#     # print(text + '\n')
+#     f = open("../../log.json", "a")
+#     f.write(text + "\n")
+#     f.close()
+#
+# # to run script locally
 # if __name__ == "__main__":
 #     input = {'zipcode': 'Massachusetts', 'query': 'data'}
-#     scrape_indeed(input, max_results_per_city = 20)
+#     write_logs(scrape_indeed(input, max_results_per_city = 20))
