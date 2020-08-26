@@ -18,7 +18,10 @@ full_text = indeed_df['full_text']
 all_rows = []
 for i in range(len(full_text)):
     row_temp = []
-    for word in linkedin_skills:
-        if word in full_text.iloc[0]:
+    for word in skills:
+        if ' ' + word.lower() + ' ' in full_text.iloc[i].lower():
+            row_temp.append(word)
+        if ' ' + word.lower() + ',' in full_text.iloc[i].lower():
             row_temp.append(word)
     all_rows.append(row_temp)
+
