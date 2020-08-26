@@ -14,5 +14,5 @@ def jobs(request):
     max_results = 20
     input = {'zipcode': zipcode, 'query': query}
     jobs = json.loads(scrape_indeed(input, max_results))
-    context = {'jobs': jobs}
+    context = {'jobs': jobs, 'input': input}
     return render(request, '../../jobs/templates/jobs.html', context)

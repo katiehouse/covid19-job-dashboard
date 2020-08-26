@@ -4,9 +4,9 @@
     {% csrf_token %}
     <div class="row mb-3">
         <div class="col-md-4 themed-grid-col">
-            <input type="text" class="form-control" id="location" placeholder="Location" name="zipcode" required></div>
+            <input type="text" class="form-control" id="location" placeholder="Location" name="zipcode" value="{{ input.zipcode }}" required></div>
         <div class="col-md-4 themed-grid-col">
-            <input type="text" class="form-control" id="jobTitle" placeholder="Job Title" name="query" required></div>
+            <input type="text" class="form-control" id="jobTitle" placeholder="Job Title" name="query" value="{{ input.query }}" required></div>
         <div class="col-md-4 themed-grid-col"><button type="submit" class="btn btn-primary">Submit</button></div>
     </div>
 </form>
