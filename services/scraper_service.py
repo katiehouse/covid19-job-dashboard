@@ -138,6 +138,70 @@ def extract_fulltext(link):
         return "NOT_FOUND"
     return "NOT_FOUND"
 
+def extract_skills(full_text):
+    skills = []
+    try:
+        # identify headers - first look for <b> and then any tag as a backup
+        skill_header = full_text.find_all("b", text=re.compile("(Skills|Qualifications|Requirements|ideal candidate|someone who|Experience|Aptitude|bring)", re.IGNORECASE), recursive=True)
+        if not skill_header:
+            skill_header = full_text.find_all("p", text=re.compile("(Skills|Qualifications|Requirements|ideal candidate|someone who|Experience|Aptitude|bring)", re.IGNORECASE), recursive=True)
+
+        # for each header, if it's shorter than a paragraph, assume its a valid header and extract the corresponding list of skills, if it is a paragraph, assume it contains the skills
+        for sub_header in skill_header:
+            #print('sub_header', sub_header.text)
+            if len(sub_header.text.split(' ')) < 10:
+                skill_list = extract_list(sub_header)
+                skills.append(', '.join(skill_list))
+            else:
+                skills.append(sub_header.text)
+
+        return(skills)
+    except:
+        return "NOT_FOUND"
+
+    return "NOT_FOUND"
+
+def extract_list(list_header): # pulls a list given a header - the list can be a sibling or contained within a parent, and can include a single <ul>, many <ul> that each include <li>, or several <li>
+    extracted_list = []
+    #print('extracting_list for', list_header)
+    try:
+        next = list_header.nextSibling
+        while next: # step through siblings of the header
+            #print('sibling', next.name, next.text)
+
+            if next.name == 'ul': # if it's an unordered list (ul), identify the list items (li) and add each to the extracted list
+                try: # case: each <ul> includes several <li>s
+                    ul_items = next.find_all('li')
+                    for item in ul_items:
+                        extracted_list.append(item.text)
+
+                except: # case: there is a <ul> but it doesn't inclue list items, i.e. each sibling is a single item in the list
+                    extracted_list.append(next.text)
+
+            if next.name == 'p':
+                extracted_list.append(next.text)
+
+            next = next.nextSibling # step forward
+
+            # end condition for siblings
+            if next.name == 'b' or re.search(re.compile("Job Type|Benefit|Education|Company|Authorization|Location|Offer|.com|Responsibilities", re.IGNORECASE), next.text): # assume this is the next header
+                #print('break')
+                break
+
+        if len(extracted_list) > 0: # after while ends
+            #print('extracted_list:', extracted_list)
+            return(extracted_list)
+        else:
+            #print('no extracted list, checking list for parent')
+            return(extract_list(list_header.parent))
+
+    except Exception(e):
+        #print(e)
+        parent = list_header.parent
+        #print(parent.text)
+        #print('Exception, checking parent')
+        return(extract_list(parent))
+
 
 def scrape_indeed(input_dict, max_results_per_city = 2000):
 
@@ -177,6 +241,7 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
                 "full_text",
                 "salary",
                 "summary",
+                "skills",
                 "total_jobs"
             ]
         )
@@ -201,6 +266,7 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
 
         total_results = searchCountpages[0].get_text().strip().split(" ")[3]
         total_results = int(total_results.replace(",", ""))
+        print("total results:", total_results)
 
         if total_results > max_results_per_city:
             total_results = max_results_per_city
@@ -263,6 +329,7 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
                 # grabbing link
                 link = extract_link(div)
                 job_post.append(link)
+                print('\n', link)
 
                 # grabbing date
                 job_post.append(extract_date(div))
@@ -281,6 +348,10 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
                 summary = extract_summary(full_text)
                 job_post.append(summary) #extract_summary(full_text))
 
+                # grabbing skills
+                job_post.append(extract_skills(full_text))
+
+                # grabbing number of results for the whole search
                 job_post.append(total_results)
 
                 # appending list of job post info to dataframe at index num
@@ -301,14 +372,13 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
 # (used for local dev)
 ####################################
 
-# #funct to see output-- saved in directory that repo is in.
-# def write_logs(text):
-#     # print(text + '\n')
-#     f = open("../../log.json", "a")
-#     f.write(text + "\n")
-#     f.close()
-#
-# # to run script locally
-# if __name__ == "__main__":
-#     input = {'zipcode': 'Massachusetts', 'query': 'data'}
-#     write_logs(scrape_indeed(input, max_results_per_city = 200))
+#funct to see output-- saved in directory that repo is in.
+def write_logs(text):
+    f = open("../log.json", "a")
+    f.write(text + "\n")
+    f.close()
+
+# to run script locally
+if __name__ == "__main__":
+    input = {'zipcode': 'Massachusetts', 'query': 'data'}
+    write_logs(scrape_indeed(input, max_results_per_city = 10))
