@@ -31,7 +31,7 @@ def extract_salary(div, full_text):
     except:
         try:
             span = div.find_all(name="span", attrs={"class": "salaryText"})
-            return span[0].get_text()
+            return span[0].get_text().replace("\n", "")
         except:
             try:
                 salary_text = full_text.find(text=re.compile("(\$)"), recursive=True)
@@ -68,21 +68,27 @@ def extract_summary(full_text):
         summary = ""
         if summary_header:
             #recursively search for next sibling, then parent and parents next siblig and so on
-            return recursive_summary(summary_header)
+            summary = recursive_summary(summary_header)
         # if no key words are find, just return the first paragraph
         else:
-            summary = full_text.findAll("p")
+            paragraphs = full_text.findAll("p")
             index = 0
-            while len(summary[index].text.split(" "))<10:
-                index+=1
-                if index < len(summary):
-                    index-=1
+            for paragraph in paragraphs:
+                if len(paragraph.text.split(" "))>20:
+                    summary = paragraph.text
                     break
-            return summary[index].text
+            if not summary:
+                summary = full_text.text
     except:
-        return "NOT_FOUND"
+        try:
+            summary = full_text.text
+        except:
+            return ""
 
-    return "NOT_FOUND"
+    if len(summary)<300:
+        return summary.replace("\n", " ")
+    else:
+        return summary[:300].replace("\n", " ") + "..."
 
 
 def recursive_summary (summary_header):
@@ -90,15 +96,12 @@ def recursive_summary (summary_header):
     if summary_header.nextSibling:
         try:
             summary = summary_header.nextSibling.text
-            #print("first try:", summary)
         except Exception as e:
             pass
     if summary.replace("/n", "").replace(" ", "") == "" or len(summary.split(" "))<10 :
         try:
-        #    print("nextSibling", summary_header.nextSibling)
             return recursive_summary(summary_header.nextSibling)
         except:
-        #    print("parent", summary_header.parent)
             return recursive_summary(summary_header.parent)
     else:
         return summary
@@ -173,7 +176,8 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
                 "date",
                 "full_text",
                 "salary",
-                "summary"
+                "summary",
+                "total_jobs"
             ]
         )
 
@@ -197,7 +201,6 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
 
         total_results = searchCountpages[0].get_text().strip().split(" ")[3]
         total_results = int(total_results.replace(",", ""))
-        print("titalresults:", total_results)
 
         if total_results > max_results_per_city:
             total_results = max_results_per_city
@@ -213,8 +216,8 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
                 + str(start)
                 + "&radius=10&sort=date"
             )
-            # print(link)
-            print("Getting results %i out of %i" % (start, total_results))
+
+            #print("Getting results %i out of %i" % (start, total_results))
             # get dom
             page = requests.get(link)
 
@@ -266,13 +269,19 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
 
                 # grabbing full_text
                 full_text = extract_fulltext(link)
-                job_post.append(full_text.text.strip())
+                try:
+                    job_post.append(full_text.text.strip())
+                except:
+                    job_post.append(full_text)
 
                 # grabbing salary
                 job_post.append(extract_salary(div, full_text))
 
                 # grabbing summary text
-                job_post.append(extract_summary(full_text))
+                summary = extract_summary(full_text)
+                job_post.append(summary) #extract_summary(full_text))
+
+                job_post.append(total_results)
 
                 # appending list of job post info to dataframe at index num
                 df.loc[num] = job_post
@@ -302,4 +311,4 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
 # # to run script locally
 # if __name__ == "__main__":
 #     input = {'zipcode': 'Massachusetts', 'query': 'data'}
-#     write_logs(scrape_indeed(input, max_results_per_city = 20))
+#     write_logs(scrape_indeed(input, max_results_per_city = 200))
