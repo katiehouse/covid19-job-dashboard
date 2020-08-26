@@ -44,12 +44,19 @@ def extract_salary(div, full_text):
 
 # extract job location
 def extract_location(div):
-    for span in div.findAll("span", attrs={"class": "location"}):
-        if span.text != []:
+    try:
+        for span in div.findAll("span", attrs={"class": "location"}):
+            if span is list: 
+                span = span[0]
             return span.text
-        else:
+    except:
+        try:
             for span in div.findAll("div", attrs={"class": "location"}):
+                if span is list: 
+                    span = span[0]
                 return span.text
+        except:
+            return "NOT_FOUND"
     return "NOT_FOUND"
 
 
@@ -61,14 +68,14 @@ def extract_job_title(div):
 
 
 # extract job summary
-def extract_summary(full_text):
+def extract_summary(full_text, n_chars = 100):
     #assuming what we want will be early on
     try:
         summary_header = full_text.find("b", text=re.compile("(Summary|Description|Position|Role|Purpose|Overview)"), recursive=True)
         summary = ""
         if summary_header:
             #recursively search for next sibling, then parent and parents next siblig and so on
-            return recursive_summary(summary_header)
+            return recursive_summary(summary_header)[0:n_chars] + "..."
         # if no key words are find, just return the first paragraph
         else:
             summary = full_text.findAll("p")
@@ -78,9 +85,12 @@ def extract_summary(full_text):
                 if index < len(summary):
                     index-=1
                     break
-            return summary[index].text
+            return summary[index].text[0:n_chars] + "..."
     except:
-        return "NOT_FOUND"
+        try:
+            return full_text[0:n_chars]
+        except:
+            return "NOT_FOUND"
 
     return "NOT_FOUND"
 
@@ -188,7 +198,7 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
         page = requests.get(link)
 
         # ensuring at least 1 second between page grabs
-        time.sleep(1)
+        time.sleep(0.25)
 
         # fetch data
         soup = get_soup(page.text)
@@ -197,7 +207,7 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
 
         total_results = searchCountpages[0].get_text().strip().split(" ")[3]
         total_results = int(total_results.replace(",", ""))
-        print("titalresults:", total_results)
+        print("total results:", total_results)
 
         if total_results > max_results_per_city:
             total_results = max_results_per_city
@@ -219,7 +229,7 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
             page = requests.get(link)
 
             # ensuring at least 1 second between page grabs
-            time.sleep(1)
+            time.sleep(0.25)
 
             # fetch data
             soup = get_soup(page.text)
@@ -255,7 +265,11 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
                 job_post.append(extract_company(div))
 
                 # grabbing location name
-                job_post.append(extract_location(div))
+                location = extract_location(div)
+                if extract_location(div) == "NOT_FOUND":
+                    job_post.append(city)
+                else:
+                    job_post.append(location)
 
                 # grabbing link
                 link = extract_link(div)
@@ -272,7 +286,11 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
                 job_post.append(extract_salary(div, full_text))
 
                 # grabbing summary text
-                job_post.append(extract_summary(full_text))
+                summary = extract_summary(full_text)
+                if extract_summary(full_text) == "NOT_FOUND":
+                    job_post.append(full_text.text.strip()[0:100] + "...")
+                else:
+                    job_post.append(summary)
 
                 # appending list of job post info to dataframe at index num
                 df.loc[num] = job_post
@@ -292,14 +310,14 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
 # (used for local dev)
 ####################################
 
-# #funct to see output-- saved in directory that repo is in.
+#funct to see output-- saved in directory that repo is in.
 # def write_logs(text):
 #     # print(text + '\n')
-#     f = open("../../log.json", "a")
+#     f = open("../log.json", "a")
 #     f.write(text + "\n")
 #     f.close()
-#
+
 # # to run script locally
 # if __name__ == "__main__":
 #     input = {'zipcode': 'Massachusetts', 'query': 'data'}
-#     write_logs(scrape_indeed(input, max_results_per_city = 20))
+#     write_logs(scrape_indeed(input, max_results_per_city = 1))

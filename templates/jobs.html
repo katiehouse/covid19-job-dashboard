@@ -4,9 +4,11 @@
     {% csrf_token %}
     <div class="row mb-3">
         <div class="col-md-4 themed-grid-col">
-            <input type="text" class="form-control" id="location" placeholder="Location" name="zipcode" value="{{ input.zipcode }}" required></div>
+            <input type="text" class="form-control" id="location" placeholder="Location" name="zipcode"
+                value="{{ input.zipcode }}" required></div>
         <div class="col-md-4 themed-grid-col">
-            <input type="text" class="form-control" id="jobTitle" placeholder="Job Title" name="query" value="{{ input.query }}" required></div>
+            <input type="text" class="form-control" id="jobTitle" placeholder="Job Title" name="query"
+                value="{{ input.query }}" required></div>
         <div class="col-md-4 themed-grid-col"><button type="submit" class="btn btn-primary">Submit</button></div>
     </div>
 </form>
@@ -35,20 +37,23 @@
         <div class="container">
             <div class="row">
                 {% for job in jobs %}
-                    <div class="col-md-4">
-                        <div class="card mb-4 shadow-sm">
-                            <div class="card-body">
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <b>
                                 <p class="card-text">{{ job.job_title }}</p>
-                                <p>{{ job.company_name }}</p>
-                                <p>{{ job.city }}</p>
-                                <p>{{ job.summary }}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <a class="btn btn-sm btn-outline-secondary" href="{{ job.link }}" target="_blank">View Job</a>
-                                    <small class="text-muted">{{ job.date }}</small>
-                                </div>
+                            </b>
+                            <p>{{ job.company_name }}</p>
+                            <p>{{ job.location }}</p>
+                            <p>{{ job.summary }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a class="btn btn-sm btn-outline-secondary" href="{{ job.link }}" target="_blank">View
+                                    Job</a>
+                                <small class="text-muted">{{ job.date }}</small>
                             </div>
                         </div>
                     </div>
+                </div>
                 {% endfor %}
             </div>
         </div>
