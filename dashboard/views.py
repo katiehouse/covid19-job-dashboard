@@ -3,6 +3,7 @@ from services.scraper_service import *
 import json
 from services.location_service import *
 
+
 def jobs(request):
     if request.method == 'POST':
         zipcode = request.POST.get('zipcode')
@@ -15,4 +16,4 @@ def jobs(request):
     input = {'zipcode': zipcode, 'query': query}
     jobs = json.loads(scrape_indeed(input, max_results))
     context = {'jobs': jobs, 'input': input}
-    return render(request, '../../jobs/templates/jobs.html', context)
+    return render(request, '../templates/jobs.html', context)
