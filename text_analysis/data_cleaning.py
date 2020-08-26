@@ -40,9 +40,10 @@ def string_clean(full_text):
     full_text = ''
     for word in temp1:
         full_text = full_text + word + ' '
-    string.punctuation = string.punctuation + "–’"
-    full_text = full_text.replace('\n', ' ').lower().translate(
-        str.maketrans(string.punctuation, ' '*len(string.punctuation)))
+    # string.punctuation = string.punctuation + "–’"
+    full_text = full_text.replace('\n', ' ').lower()
+    full_text = full_text.replace("@#$%^*()[]{}\|`~-=+", "")
+    full_text = full_text.replace("-,&_/:;!?.<>", " ")
     
     return(full_text)
 
@@ -82,6 +83,32 @@ def data_cleaning():
     full_text = stem_and_lemmatize(full_text)
 
     return(full_text)
+
+########################################################
+# try filtering by linkedin skills
+########################################################
+
+
+linkedin_skills = pd.read_csv('text_analysis/linked_in_skills.csv')
+linkedin_skills = list(linkedin_skills)
+for skill in linkedin_skills:
+    skill = skill.lower()
+
+
+with open('text_analysis/indeed.json') as f:
+        indeed = json.load(f)
+indeed_df = pd.json_normalize(indeed)
+full_text = indeed_df['full_text']
+for row in full_text:
+    row = row.lower()
+
+for i in range(len(full_text)):
+    row_temp = []
+    for word in linkedin_skills:
+        if word in full_text.iloc[i]:
+            row_temp.append(word)
+
+    
 
 ########################################################
 # from TFIGF implementation article
@@ -179,18 +206,35 @@ def tf_igf(full_text):
     return(TFIDF_scores)
      
 
+def read_skills():
+    with open('text_analysis/cleaned_related_skills.json') as f:
+            skills = json.load(f)
+    skills_df = pd.json_normalize(skills)
+
+    return(skills_df)
+
+def filter_TFIDF(TFIDF_scores, skills_df):
+    newDict = dict()
+    for (key, value) in TFIDF_scores:
+        if value in skills_df['name']:
+            newDict[key] = value
+    return(newDict)
+
+
+def to_skills():
+    full_text = data_cleaning()
+    TFIDF_scores = tf_igf(full_text)
+    skills_df = read_skills()
+    # newDict = filter_TFIDF(TFIDF_scores, skills_df)
+    print(newDict)
+
+
 def main():
     full_text = data_cleaning()
     tf_igf_dict = tf_igf(full_text)
-    print(tf_igf_dict)
+    filtered_vals = to_skills()
 
 
 if __name__ == "__main__":
     main()
 
-
-
-
-
-
-    
