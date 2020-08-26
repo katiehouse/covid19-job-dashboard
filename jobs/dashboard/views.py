@@ -1,53 +1,18 @@
 from django.shortcuts import render
 from services.scraper_service import *
 import json
-
+from services.location_service import *
 
 def jobs(request):
     if request.method == 'POST':
         zipcode = request.POST.get('zipcode')
         query = request.POST.get('query')
-        input = {'zipcode': zipcode, 'query': query}
-        max_results = 20
-        jobs = json.loads(scrape_indeed(input, max_results))
     else:
-        jobs = [{
-            "unique_id": "pj_a13301076daa0ac2",
-            "city": "Massachusetts",
-            "job_qry": "data",
-            "job_title": "Lead Data Analyst - Systems Administration and Analytics",
-            "company_name": "NATIONAL GRID CO USA (NE POWER)",
-            "location": "NOT_FOUND",
-            "link": "https:\/\/www.indeed.com\/viewjob?jk=a13301076daa0ac2",
-            "summary": "About us\n\nNational Grid is Hiring a Lead Analyst - Systems Administration and Analytics in our Waltham, MA location.\nEvery day we deliver safe and secure energy to homes, communities, and businesses. We are there when people need us the most. We connect people to the energy they need for the lives they live. The pace of change in society and our industry is accelerating and our expertise and track record puts us in an unparalleled position to shape the sustainable future of our industry.\nTo be successful we must anticipate the needs of our customers, reducing the cost of energy delivery today and pioneering the flexible energy systems of tomorrow. This requires us to deliver on our promises and always look for new opportunities to grow, both ourselves and our business.\nJob Purpose\n\nThe Systems Administration and Analytics department is responsible for managing cross-functional business systems that supports project estimating. You will work closely with leaders across the Capital Delivery organization to improve business processes and identify data driven solutions. Gaining a deep understanding of the requirements that drive business process and the technologies that enable them you will conduct analyses to identify deficiencies, needs, and opportunities to improve our use of technology and data.\nIn this role, you will also interface with end-users from estimating departments and Capital Delivery business areas to identify business capability gaps and opportunities for new and existing systems, collect and document requirements to fill these gaps, support execution of approved plans and systems, maintain and utilize data systems.\nKey Accountabilities\n\nData Analysis & Reporting:\nConduct analysis using statistical software, databases, and spreadsheets (can write advanced macros and maintain complex spreadsheets)\nPerform data cleansing, analysis and monitoring to ensure data quality throughout the end to end process\nManage and integrate multiple sources of data by developing data flows and interpreting data models\nDevelop, build and analyse dashboards and reports to monitor metrics and KPI\u2019s\nData Management:\nChampion data management practices with our stakeholders focused on continuous development of data maturity models\nMonitor data quality scorecards and data integrity efforts with data owners\/stewards to resolve data quality issues\nDatabase \/ Technical:\nWork with data providers in internal client organizations, specifically in the development of data requests, checking of data received and following up with data providers on data issues.\nDevelop scripts and queries, ETL data from different sources utilizing SQL and data ETL software\nAssemble and maintain databases\/data systems\nAbility to transition from legacy systems and processes to efficient best practices\nDeal directly with clients on projects involving technical methodologies\nIdentify opportunities to improve alignment between business processes and systems.\n\nSupervisory\/Interpersonal- Experience Required\n\n Strong interpersonal skills including negotiations and communications.\nAbility to influence key stakeholders and lead a group even where the role holder has no direct authority.\nQualifications\nBachelor\u2019s Degree from an accredited college or university preferably in a technical field required (Engineering, Computer Science, Business Analytics or Management Information Systems)\n7+ years of consistent track record in Analytics and development and application of data management policies and compliance\n3+ years of Database and SQL knowledge\nExperience with utilizing advanced statistical methods and simulations to develop prescriptive and predictive models\nExperience working with large operational data sets, involving categorical data for solving classification problems, is a plus.\nExpert data visualization techniques for charts and reports - Good knowledge of PowerBI, Tableau\nUnstructured Data handling - Know best practices on how to stage unstructured data and model it to solve the problem at hand\nMore Information\n\nNational Grid is an equal opportunity employer that values a broad diversity of talent, knowledge, experience and expertise. We foster a culture of inclusion that drives employee engagement to deliver superior performance to the communities we serve. National Grid is proud to be an affirmative action employer. We encourage minorities, women, individuals with disabilities and protected veterans to join the National Grid team.",
-            "salary": "NOT_FOUND",
-            "date": "Just posted",
-            "full_text": "NOT_FOUND"
-        }, {
-            "unique_id": "pj_4054497532e67c3e",
-            "city": "Massachusetts",
-            "job_qry": "data",
-            "job_title": "Quality Assurance Manager",
-            "company_name": "Salt Marsh Foods",
-            "location": "NOT_FOUND",
-            "link": "https:\/\/www.indeed.com\/viewjob?jk=4054497532e67c3e",
-            "summary": "job Description: Quality Assurance Manager will manage Quality Assurance department and personnel.Job Responsibilities: The Quality Assurance Manager will direct and manage quality assurance and food safety systems. The Quality Assurance Manager will be responsible for implementing and promoting quality achievement and performance. The position will manage inspections and audits by regulatory agencies (USDA, FDA), customers, and third-party auditing companies. QA manager will direct compliance to quality, GFSI standards, GMP\u2019s, HACCP, sanitation, pest control and Food Defense. QA Manager will be responsible for 1st and 2nd shift QA staff. Flexible schedule will be required.Qualifications: Bachelor's Degree preferred. Associates Degree with relative work experience will be consideredMinimum 5 years-experience managing a quality department in a high volume ready to eat food manufacturing facilityHACCP Certified (Seafood and USDA Meat and Poultry)SQF PractitionerExperienced in the development, implementation, and maintenance of SQF programsStrong knowledge of food safetyEmployee training experienceKnowledge of GFSI, HACCP, GMP\u2019s, SSOP, USDA, and FDAProficient in English, Bilingual Spanish or Portuguese is preferred but not requiredSelf-starter, motivated, self-drivenExcellent writing, reporting, and data gathering abilitiesStrong communication abilitiesStrong computer literacyJob Type: Full-timeApplication QuestionsYou have requested that Indeed ask candidates the following questions:How many years of Quality Assurance experience do you have?How many years of relevant experience do you have?Are you able to work in New Bedford, MA 02740?Job Type: Full-timePay: $65,000.00 - $80,000.00 per yearBenefits:Dental insuranceHealth insurancePaid time offSchedule:HolidaysMonday to FridayWeekendsExperience:relevant: 5 years (Required)Quality Assurance: 5 years (Required)Work Location:One locationBenefit Conditions:Waiting period may applyWork Remotely:No",
-            "salary": "\n$65,000 - $80,000 a year",
-            "date": "Just posted",
-            "full_text": "NOT_FOUND"
-        }, {
-            "unique_id": "p_fa8212964e29c88f",
-            "city": "Massachusetts",
-            "job_qry": "data",
-            "job_title": "Data Analyst\/Planner",
-            "company_name": "Garden Remedies, INC.",
-            "location": "Fitchburg, MA 01453",
-            "link": "https:\/\/www.indeed.com\/viewjob?jk=fa8212964e29c88f",
-            "summary": "Data Analyst\/Planner - 1st Shift 6am - 2:30pmJob DescriptionThe responsibilities of the Data Analyst\/Planner within Garden Remedies, Inc. (GRI) broadly embrace the key areas described below.Responsibilities: *Performs daily\/weekly MRPProduces weekly production scheduleReviews testing resultsDetermines shipment quantities to dispensary locations as needed, ensuring sufficient inventory levelsSchedules deliveriesUpdates data tracking sheets, to ensure accuracy of models\/forecastsGathers data from MRP systemProvides information to assist business operationsMaintains extensive knowledge of GRI\u2019s productsIs knowledgeable about MA compliance and reporting regulationsReports inventory issues to managementCompletes other duties as assigned in a timely and appropriate manner**Qualifications:Proficient with Microsoft Office, or highly motivated to acquire necessary skillsExcellent communication skills, both verbal and writtenExtremely high attention to detail, including the ability to detect abnormalities in data and report them to managementDemonstrated history of strong attendance, including the ability to adhere to a strict scheduleThree years\u2019 experience in data analysis\/planning, or equivalent degree preferredKnowledge of Lean\/Six Sigma principles or eager to acquire necessary knowledge preferredAbility to work within a team and maintain a positive attitudeFun attitude and strong work ethicAt least 21 years of age.**Supervision:Works under the general supervision of the Manufacturing ManagerThis position is not responsible for supervising other employees**REQUIRED SKILLSDemonstrated passion to serving the medical and adult-use cannabis community.Excellent communication skillsComputer operating skillsMust be able to pass a background checkMust not have been convicted of any felony offenseMedical marijuana and recreational marijuana product knowledge highly desirableExperience in a complex, fast-paced environmentAbility to genuinely and respectfully connect with coworkers and visitorsDesire to learn more about cannabisOrganization and planning skillsStrong operational skills in a service environmentTeam-building skillsAbility to pass all required background checks to work with cannabisAbility to communicate clearly and concisely, both orally and in writingAbility to build relationships both internally as well as in the communityAbility to handle confidential and sensitive informationAbility to work a set schedule*Job Type: Full-timePay: $18.00 per hourBenefits:Dental insuranceEmployee discountHealth insuranceLife insurancePaid time offVision insuranceSchedule:Monday to FridayThis Company Describes Its Culture as:Detail-oriented -- quality and precision-focusedOutcome-oriented -- results-focused with strong performance cultureStable -- traditional, stable, strong processesCompany's website:www.gardenremedies.comWork Remotely:No",
-            "salary": "\n$18 an hour",
-            "date": "Just posted",
-            "full_text": "NOT_FOUND"
-        }]
+        host = request.get_host()
+        zipcode = get_city(host)
+        query = 'Data Science'
+    max_results = 20
+    input = {'zipcode': zipcode, 'query': query}
+    jobs = json.loads(scrape_indeed(input, max_results))
     context = {'jobs': jobs}
-
     return render(request, '../../jobs/templates/jobs.html', context)
