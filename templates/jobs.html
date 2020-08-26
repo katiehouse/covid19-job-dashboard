@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block query %}
+<form class="needs-validation" action="/" method="post">
+    {% csrf_token %}
+    <div class="row mb-3">
+        <div class="col-md-4 themed-grid-col">
+            <input type="text" class="form-control" id="location" placeholder="Location" name="zipcode" value="{{ input.zipcode }}" required></div>
+        <div class="col-md-4 themed-grid-col">
+            <input type="text" class="form-control" id="jobTitle" placeholder="Job Title" name="query" value="{{ input.query }}" required></div>
+        <div class="col-md-4 themed-grid-col"><button type="submit" class="btn btn-primary">Submit</button></div>
+    </div>
+</form>
+{% endblock %}
+{% block tokens %}
+<section>
+    <div class="alert alert-secondary" role="alert">
+        <h4 class="alert-heading">Top Skills in Demand!</h4>
+        <span class="badge badge-pill badge-secondary">Pandas <span class="badge badge-light">18</span> </span>
+        <span class="badge badge-pill badge-secondary">PyTorch <span class="badge badge-light">7</span> </span>
+        <span class="badge badge-pill badge-secondary">TensorFlow <span class="badge badge-light">6</span> </span>
+        <span class="badge badge-pill badge-secondary">R <span class="badge badge-light">4</span></span>
+        <span class="badge badge-pill badge-secondary">Tableau <span class="badge badge-light">2</span> </span>
+        <span class="badge badge-pill badge-secondary">Python <span class="badge badge-light">1</span> </span>
+        <span class="badge badge-pill badge-secondary">Machine Learning <span class="badge badge-light">1</span></span>
+        <span class="badge badge-pill badge-secondary">Statistics <span class="badge badge-light">1</span></span>
+        <span class="badge badge-pill badge-secondary">Blockchain <span class="badge badge-light">1</span></span>
+        <hr>
+        <p class="mb-0">Based on the 532 jobs matching your criteria</p>
+    </div>
+</section>
+{% endblock %}
+{% block jobs %}
+<section>
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                {% for job in jobs %}
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-body">
+                                <p class="card-text">{{ job.job_title }}</p>
+                                <p>{{ job.company_name }}</p>
+                                <p>{{ job.city }}</p>
+                                <p>{{ job.summary }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">View Job</button>
+                                    <small class="text-muted">{{ job.date }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
