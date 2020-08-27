@@ -257,7 +257,7 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
         page = requests.get(link)
 
         # ensuring at least 1 second between page grabs
-        time.sleep(1)
+        time.sleep(0.1)
 
         # fetch data
         soup = get_soup(page.text)
@@ -288,7 +288,7 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
             page = requests.get(link)
 
             # ensuring at least 1 second between page grabs
-            time.sleep(1)
+            time.sleep(0.1)
 
             # fetch data
             soup = get_soup(page.text)
@@ -329,7 +329,6 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
                 # grabbing link
                 link = extract_link(div)
                 job_post.append(link)
-                print('\n', link)
 
                 # grabbing date
                 job_post.append(extract_date(div))

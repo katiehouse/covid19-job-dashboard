@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 {% block query %}
-<form class="needs-validation" action="/" method="post">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#wait").hide();
+        $('#jobform').submit(function () {
+            $("#wait").show();
+        });
+    });
+</script>
+
+<form class="needs-validation" action="/" method="post" id="jobform">
     {% csrf_token %}
     <div class="row mb-3">
         <div class="col-md-4 themed-grid-col">
@@ -17,15 +28,10 @@
 <section>
     <div class="alert alert-secondary" role="alert">
         <h4 class="alert-heading">Top Skills in Demand!</h4>
-        <span class="badge badge-pill badge-secondary">Pandas <span class="badge badge-light">18</span> </span>
-        <span class="badge badge-pill badge-secondary">PyTorch <span class="badge badge-light">7</span> </span>
-        <span class="badge badge-pill badge-secondary">TensorFlow <span class="badge badge-light">6</span> </span>
-        <span class="badge badge-pill badge-secondary">R <span class="badge badge-light">4</span></span>
-        <span class="badge badge-pill badge-secondary">Tableau <span class="badge badge-light">2</span> </span>
-        <span class="badge badge-pill badge-secondary">Python <span class="badge badge-light">1</span> </span>
-        <span class="badge badge-pill badge-secondary">Machine Learning <span class="badge badge-light">1</span></span>
-        <span class="badge badge-pill badge-secondary">Statistics <span class="badge badge-light">1</span></span>
-        <span class="badge badge-pill badge-secondary">Blockchain <span class="badge badge-light">1</span></span>
+        {% for skill in skills %}
+        <span class="badge badge-pill badge-secondary">{{ skill.skill }} <span
+                class="badge badge-light">{{ skill.value }}</span> </span>
+        {% endfor %}
         <hr>
         <p class="mb-0">Based on the 532 jobs matching your criteria</p>
     </div>
@@ -34,17 +40,21 @@
 {% block jobs %}
 <section>
     <div class="album py-5 bg-light">
-        <div class="d-flex flex-column align-items-center justify-content-center">
-            <div class="row">
-                <div class="spinner-border text-primary" style="width: 5rem; height: 5rem;" role="status">
-                    <span class="sr-only">Loading...</span>
+        {% if show == True %}
+        <div id="wait">
+            <div class="d-flex flex-column align-items-center justify-content-center">
+                <div class="row">
+                    <div class="spinner-border text-primary" style="width: 5rem; height: 5rem;" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <strong>Loading Jobs from Indeed</strong>
                 </div>
             </div>
-            <div class="row">
-                <strong>Loading Jobs from Indeed</strong>
-            </div>
         </div>
-        <div class="container">
+        {% endif %}
+        <div class="container" id="jobs">
             <div class="row">
                 {% for job in jobs %}
                 <div class="col-md-4">
