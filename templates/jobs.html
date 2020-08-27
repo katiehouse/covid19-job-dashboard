@@ -1,7 +1,60 @@
 {% extends "base.html" %}
 {% block query %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style>
 
+.jumbotron {
+  background-color: #002F6C;
+  padding: 1rem 15rem;
+  border-radius: 0px;
+  margin-bottom: 0rem;
+}
+
+.display-4 {
+  color: white;
+}
+
+.alert{
+  {#border-radius: 0px;#}
+  {#border-color: #856404!important;#}
+  {#margin-bottom: 0rem;#}
+  {#border: 4px solid!important;#}
+  {#background-color: white!important;#}
+}
+
+.badge-secondary {
+    color: #ffc107;
+    background-color: #004085;
+}
+
+.badge-pill {
+  border-radius: 0rem;
+}
+
+.badge-light {
+  background-color: #b3d7ff;
+}
+
+.alert-heading {
+  text-align: center;
+}
+
+.bg-light {
+  background-color: #002F6C!important;
+}
+
+.card {
+  {#background-color: #a4b7cc;#}
+}
+
+.col-sm-4 {
+  text-align:left;
+}
+
+.mb-3 {
+  margin-left: 110px;
+}
+</style>
 <script>
     $(document).ready(function () {
         $("#wait").hide();
@@ -10,34 +63,34 @@
             $("#jobs").hide();
         });
     });
-    $(window).load(function () {
-        alert("hi 2");
-    });
 </script>
-
-<form class="needs-validation" action="/" method="post" id="jobform">
-    {% csrf_token %}
-    <div class="row mb-3">
-        <div class="col-md-4 themed-grid-col">
-            <input type="text" class="form-control" id="location" placeholder="Location" name="zipcode"
-                value="{{ input.zipcode }}" required></div>
-        <div class="col-md-4 themed-grid-col">
-            <input type="text" class="form-control" id="jobTitle" placeholder="Job Title" name="query"
-                value="{{ input.query }}" required></div>
-        <div class="col-md-4 themed-grid-col"><button type="submit" class="btn btn-primary">Submit</button></div>
-    </div>
-</form>
+<div class="d-flex justify-content-center align-items-center">
+    <form class="form-inline needs-validation" action="/" method="post" id="jobform">
+        {% csrf_token %}
+        <input type="text" class="form-control mr-2" id="location" placeholder="Location" name="zipcode"
+            value="{{ input.zipcode }}" required>
+        <input type="text" class="form-control mr-2" id="jobTitle" placeholder="Job Title" name="query"
+            value="{{ input.query }}" required>
+        <button type="submit" class="btn btn-outline-light">Submit</button>
+    </form>
+</div>
 {% endblock %}
 {% block tokens %}
 <section>
-    <div class="alert alert-secondary" role="alert">
-        <h4 class="alert-heading">Top Skills in Demand!</h4>
-        {% for skill in skills %}
-        <span class="badge badge-pill badge-secondary">{{ skill.skill }} <span
-                class="badge badge-light">{{ skill.value }}</span> </span>
-        {% endfor %}
-        <hr>
-        <p class="mb-0">Based on the {{ number_of_jobs }} jobs matching your criteria</p>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+          <div class="alert" role="alert">
+            {% if number_of_jobs is not 0 %}<h4 class="alert-heading">Top Skills in Demand!</h4>{% endif %}
+                {% for skill in skills %}
+                <span class="badge badge-pill badge-secondary">{{ skill.skill }} <span
+                        class="badge badge-light">{{ skill.value }}</span> </span>
+                {% endfor %}
+                <hr>
+                <p class="mb-0">Based on the {{ number_of_jobs }} jobs matching your criteria</p>
+            </div>
+        </div>
+        <div class="col-1"></div>
     </div>
 </section>
 {% endblock %}
@@ -52,7 +105,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <strong>Loading Jobs from Indeed</strong>
+                    <strong style="color: white">Loading Jobs from Indeed</strong>
                 </div>
             </div>
         </div>
@@ -64,7 +117,7 @@
                         <div class="card-body">
                             <p class="card-text">{{ job.job_title }}</p>
                             <p>{{ job.company_name }}</p>
-                            <p>{{ job.city }}</p>
+                            <p>{{ job.location }}</p>
                             <p>{{ job.summary }}</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <a class="btn btn-sm btn-outline-secondary" href="{{ job.link }}" target="_blank">View
