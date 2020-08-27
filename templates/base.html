@@ -1,25 +1,27 @@
 {% extends 'bootstrap.html' %}
 
+{% load static %}
 {% load bootstrap4 %}
 {# Load CSS and JavaScript #}
 {% bootstrap_css %}
+
+
 {% bootstrap_javascript jquery='full' %}
-
-{% load static %}
-<link rel="stylesheet" href="{% static 'mycss.css' %}">
-
 
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 {% block bootstrap4_content %}
-<div class="container">
-    <section class="jumbotron text-center">
-        <h1>Job Lens</h1>
-        <p class="lead text-muted">Detangling the job web</p>
-        {% block query %}{% endblock %}
-    </section>
-    {% block tokens %}{% endblock %}
-    {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
-    {% block jobs %}{% endblock %}
-</div>
+<link rel="stylesheet" href="{% static 'css/bootstrap-overrides.css' %}">
+     <div class="container-full-bg">
+        <section class="jumbotron text-center">
+        <!--  <div class="p-3 mb-2 bg-dark text-white"> -->
+            <h1 class="display-4">Job Lens</h1>
+            <p class="lead text-muted">Detangling the Job Web</p>
+            {% block query %}{% endblock %}
+        <!--  </div> -->
+        </section>
+        {% block tokens %}{% endblock %}
+        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
+        {% block jobs %}{% endblock %}
+      </div>
 {% endblock %}
