@@ -329,7 +329,6 @@ def scrape_indeed(input_dict, max_results_per_city = 2000):
                 # grabbing link
                 link = extract_link(div)
                 job_post.append(link)
-                print('\n', link)
 
                 # grabbing date
                 job_post.append(extract_date(div))

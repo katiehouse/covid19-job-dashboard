@@ -15,15 +15,9 @@
 <section>
     <div class="alert alert-secondary" role="alert">
         <h4 class="alert-heading">Top Skills in Demand!</h4>
-        <span class="badge badge-pill badge-secondary">Pandas <span class="badge badge-light">18</span> </span>
-        <span class="badge badge-pill badge-secondary">PyTorch <span class="badge badge-light">7</span> </span>
-        <span class="badge badge-pill badge-secondary">TensorFlow <span class="badge badge-light">6</span> </span>
-        <span class="badge badge-pill badge-secondary">R <span class="badge badge-light">4</span></span>
-        <span class="badge badge-pill badge-secondary">Tableau <span class="badge badge-light">2</span> </span>
-        <span class="badge badge-pill badge-secondary">Python <span class="badge badge-light">1</span> </span>
-        <span class="badge badge-pill badge-secondary">Machine Learning <span class="badge badge-light">1</span></span>
-        <span class="badge badge-pill badge-secondary">Statistics <span class="badge badge-light">1</span></span>
-        <span class="badge badge-pill badge-secondary">Blockchain <span class="badge badge-light">1</span></span>
+        {% for skill in skills %}
+            <span class="badge badge-pill badge-secondary">{{ skill.skill }} <span class="badge badge-light">{{ skill.value }}</span> </span>
+        {% endfor %}
         <hr>
         <p class="mb-0">Based on the 532 jobs matching your criteria</p>
     </div>
