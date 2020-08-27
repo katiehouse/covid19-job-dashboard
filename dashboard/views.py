@@ -23,6 +23,10 @@ def jobs(request):
         jobs = None
         skills = []
         show = True
-    
-    context = {'jobs': jobs, 'input': input, 'skills': skills, 'show': show}
+
+    if jobs == None:
+        number_of_jobs = 0
+    else:
+        number_of_jobs = len(jobs)
+    context = {'jobs': jobs, 'input': input, 'skills': skills, 'show': show, 'number_of_jobs': number_of_jobs}
     return render(request, '../templates/jobs.html', context)
