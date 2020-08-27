@@ -30,8 +30,15 @@ def extract_skills():
 
     # data cleaning
     full_text = full_text.replace('\n', ' ').lower()
-    full_text = full_text.replace("@#$%^[]{}\|`~-=", "")
-    full_text = full_text.replace(",_/:;!?<>", " ")
+    full_text = full_text.replace('&', 'and')
+    
+    replacements1 = ['!', '@','#','$','%','^','[',']','{','}','\\','|','`','~','-','=']
+    for replace1 in replacements1:
+        full_text = full_text.replace(replace1, '')
+    
+    replacements1 = ['!', ',','_','/',':',';','?','<','>', '.']
+    for replace1 in replacements1:
+        full_text = full_text.replace(replace1, ' ')
 
     # create empty skills dictionary
     # if the skill exists in the job descriptions,
@@ -47,6 +54,18 @@ def extract_skills():
 # older code end
 
     skills = [x.lower() for x in skills]
+    for i in range(len(skills)):
+        skills[i] = skills[i].replace('&', 'and')
+    replacements1 = ['!', '@','#','$','%','^','[',']','{','}','\\','|','`','~','-','=']
+    for i in range(len(skills)):
+        for replace1 in replacements1:
+            skills[i] = skills[i].replace(replace1, '')
+    
+    replacements1 = ['!', ',','_','/',':',';','?','<','>', '.']
+    for i in range(len(skills)):
+        for replace1 in replacements1:
+            skills[i] = skills[i].replace(replace1, ' ')
+    
     skill_dict = {}
     for i in range(1,6):
         for word in ngrams(full_text.split(), i):
