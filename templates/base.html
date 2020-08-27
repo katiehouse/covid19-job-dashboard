@@ -11,17 +11,16 @@
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 {% block bootstrap4_content %}
-<link rel="stylesheet" href="{% static 'css/bootstrap-overrides.css' %}">
-     <div class="container-full-bg">
-        <section class="jumbotron text-center">
-        <!--  <div class="p-3 mb-2 bg-dark text-white"> -->
-            <h1 class="display-4">Job Lens</h1>
-            <p class="lead text-muted">Detangling the Job Web</p>
-            {% block query %}{% endblock %}
-        <!--  </div> -->
-        </section>
-        {% block tokens %}{% endblock %}
-        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
-        {% block jobs %}{% endblock %}
-      </div>
+<div class="container-full-bg">
+  <section class="jumbotron text-center">
+    <!--  <div class="p-3 mb-2 bg-dark text-white"> -->
+    <h1 class="display-4">Job Lens</h1>
+    <p class="lead text-muted">Detangling the Job Web</p>
+    {% block query %}{% endblock %}
+    <!--  </div> -->
+  </section>
+  {% block tokens %}{% endblock %}
+  {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
+  {% block jobs %}{% endblock %}
+</div>
 {% endblock %}
