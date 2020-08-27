@@ -1,6 +1,5 @@
 import csv
 import json
-
 from nltk import ngrams
 from pandas import json_normalize
 
@@ -32,7 +31,7 @@ def extract_skills(jobs):
     full_text = full_text.replace('\n', ' ').lower()
     full_text = full_text.replace('&', 'and')
     
-    replacements1 = ['!', '@','#','$','%','^','[',']','{','}','\\','|','`','~','-','=', '(', ')', '.']
+    replacements1 = ['!', '@','$','%','^','[',']','{','}','\\','|','`','~','-','=', '(', ')', '.']
     for replace1 in replacements1:
         full_text = full_text.replace(replace1, '')
     
@@ -53,10 +52,13 @@ def extract_skills(jobs):
 #                 skill_dict[word] = 1
 # older code end
 
+    skills_raw = skills
+
+    # data cleaning for skills
     skills = [x.lower() for x in skills]
     for i in range(len(skills)):
         skills[i] = skills[i].replace('&', 'and')
-    replacements1 = ['!', '@','#','$','%','^','[',']','{','}','\\','|','`','~','-','=', '(', ')', '.']
+    replacements1 = ['!', '@','$','%','^','[',']','{','}','\\','|','`','~','-','=', '(', ')', '.']
     for i in range(len(skills)):
         for replace1 in replacements1:
             skills[i] = skills[i].replace(replace1, '')
@@ -65,7 +67,22 @@ def extract_skills(jobs):
     for i in range(len(skills)):
         for replace1 in replacements1:
             skills[i] = skills[i].replace(replace1, ' ')
+
+    skills_truncated = []
+    for i in range(len(skills)):
+        skill = word_tokenize(skills[i])
+        if len(skills[i]) > 5:
+            skill = skill[0:5]
+        skill = ' '.join(skill)
+        skills_truncated.append(skill)
+    skills = skills_truncated
     
+    df = pd.DataFrame()
+    df['skills_raw'] = skills_raw
+    df['skills'] = skills
+
+    df.to_csv('text_analysis/df_test.csv')
+
     skill_dict = {}
     for i in range(1,6):
         for word in ngrams(full_text.split(), i):
@@ -83,7 +100,8 @@ def extract_skills(jobs):
     
     temp_list = []
     for key, value in skill_dict.items():
-        temp_list.append({'skill': key, 'value': value})
+        skill_raw = df[df['skills'] == key].iloc[0, 0]
+        temp_list.append({'skill': skill_raw, 'value': value})
     skill_dict = temp_list
 
     return skill_dict
