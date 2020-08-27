@@ -1,6 +1,6 @@
 # import packages
 import bs4
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 import requests
 import re
 import pandas as pd
@@ -142,65 +142,93 @@ def extract_skills(full_text):
     skills = []
     try:
         # identify headers - first look for <b> and then any tag as a backup
-        skill_header = full_text.find_all("b", text=re.compile("(Skills|Qualifications|Requirements|ideal candidate|someone who|Experience|Aptitude|bring)", re.IGNORECASE), recursive=True)
+
+        header_regex = re.compile("(Skills|Qualifications|Requirements|ideal candidate|someone who|Experience|Aptitude|bring|What does it take)", re.IGNORECASE)
+
+        skill_header = full_text.find_all("b", text=header_regex, recursive=True)
         if not skill_header:
-            skill_header = full_text.find_all("p", text=re.compile("(Skills|Qualifications|Requirements|ideal candidate|someone who|Experience|Aptitude|bring)", re.IGNORECASE), recursive=True)
+            skill_header = full_text.find_all("p", text=header_regex, recursive=True)
 
         # for each header, if it's shorter than a paragraph, assume its a valid header and extract the corresponding list of skills, if it is a paragraph, assume it contains the skills
         for sub_header in skill_header:
-            #print('sub_header', sub_header.text)
+            # print('sub_header', sub_header.text)
             if len(sub_header.text.split(' ')) < 10:
                 skill_list = extract_list(sub_header)
+                # print('extracted list (result):', skill_list)
                 skills.append(', '.join(skill_list))
-            else:
+
+            if len(skills) == 0:
+                # print('no skills extracted, using', sub_header)
                 skills.append(sub_header.text)
 
+        print('extracted skills:', skills)
         return(skills)
-    except:
+    except Exception as e:
+        # print('exception in extract_skills/try:, returning NOT_FOUND')
         return "NOT_FOUND"
 
+    # print('got past try/except somehow, returning NOT_FOUND')
     return "NOT_FOUND"
 
-def extract_list(list_header): # pulls a list given a header - the list can be a sibling or contained within a parent, and can include a single <ul>, many <ul> that each include <li>, or several <li>
+def extract_list(list_header, recursed = 0): # pulls a list given a header - the list can be a sibling or contained within a parent, and can include a single <ul>, many <ul> that each include <li>, or several <li>
     extracted_list = []
-    #print('extracting_list for', list_header)
+    # print('extracting_list for', list_header)
     try:
         next = list_header.nextSibling
-        while next: # step through siblings of the header
-            #print('sibling', next.name, next.text)
+        end = False
+        while next and end == False: # step through siblings of the header
+            # if not isinstance(next, NavigableString):
 
-            if next.name == 'ul': # if it's an unordered list (ul), identify the list items (li) and add each to the extracted list
-                try: # case: each <ul> includes several <li>s
-                    ul_items = next.find_all('li')
-                    for item in ul_items:
-                        extracted_list.append(item.text)
+            if isinstance(next, NavigableString):
+                # print('sibling: NavigableString:', str(next))
+                pass
+            else:
+                # print('sibling:', next.name, next.text)
 
-                except: # case: there is a <ul> but it doesn't inclue list items, i.e. each sibling is a single item in the list
+                if next.name == 'ul': # if it's an unordered list (ul), identify the list items (li) and add each to the extracted list
+                    try: # case: each <ul> includes several <li>s
+                        ul_li_items = next.find_all('li')
+                        # print('ul items:', ul_li_items, ', length', len(ul_li_items))
+                        for item in ul_li_items:
+                            extracted_list.append(item.text)
+                            # print('added li', item.text)
+                    except: # case: there is a <ul> but it doesn't inclue list items, i.e. each sibling is a single item in the list
+                        # print('no li items in list')
+                        extracted_list.append(next.text)
+
+                if next.name == 'p' or next.name == 'div':
                     extracted_list.append(next.text)
-
-            if next.name == 'p':
-                extracted_list.append(next.text)
+                    # print('added p or div', next.text)
 
             next = next.nextSibling # step forward
 
             # end condition for siblings
-            if next.name == 'b' or re.search(re.compile("Job Type|Benefit|Education|Company|Authorization|Location|Offer|.com|Responsibilities", re.IGNORECASE), next.text): # assume this is the next header
-                #print('break')
-                break
+            if next and not isinstance(next, NavigableString):
+                next_header_regex = re.compile("Job Type|Benefit|Education|Company|Authorization|Location|Offer|\.com|Responsibilities|About|Compensation", re.IGNORECASE)
+                if next.name == 'b' or re.search(next_header_regex, next.text) or end == True: # assume this is the next header
+                    end = True
+                    # print('end stepping thru siblings (found header):', next.text)
+
+        # print('while loop over')
 
         if len(extracted_list) > 0: # after while ends
-            #print('extracted_list:', extracted_list)
             return(extracted_list)
-        else:
-            #print('no extracted list, checking list for parent')
-            return(extract_list(list_header.parent))
+        elif len(extracted_list) == 0 and recursed < 3:
+            # print('no extracted list from ', list_header, ', recursing parent')
+            return(extract_list(list_header.parent, recursed = recursed + 1))
 
-    except Exception(e):
-        #print(e)
+    except Exception as e:
+        print(e)
         parent = list_header.parent
-        #print(parent.text)
+        # print('exception in extract_list/try')
+        if len(skills) == 0:
+            # print('exception in while and no skills, recursing parent'
+            return(extract_list(list_header.parent, recursed = recursed + 1))
+
+
         #print('Exception, checking parent')
-        return(extract_list(parent))
+        #return(extract_list(parent))
+# end extract_list
 
 
 def scrape_indeed(input_dict, max_results_per_city = 2000):
