@@ -80,15 +80,19 @@ def extract_skills():
     
     
     skill_dict = dict((key,value) for key, value in skill_dict.items() if key in skills)
+    
+    temp_list = []
+    for key, value in skill_dict.items():
+        temp_list.append({'skill': key, 'value': value})
+    skill_dict = temp_list
 
     return(skill_dict)
 
 def main():
     skill_dict = extract_skills()
-    sort_skills = sorted(skill_dict.items(), key=lambda x: x[1], reverse=True)
-    counts1 = Counter(skill_dict) 
-    high = counts1.most_common(10)
-    print(high)
+    sort_skills = sorted(skill_dict, key = lambda k:k['value'], reverse = True)
+    top_10 = sort_skills[:10]
+    print(top_10)
 
 
 if __name__ == "__main__":
