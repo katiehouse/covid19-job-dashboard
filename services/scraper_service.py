@@ -49,13 +49,21 @@ def extract_salary(div, full_text):
 
 # extract job location
 def extract_location(div):
-    for span in div.findAll("span", attrs={"class": "location"}):
-        if span.text != []:
+    try:
+        for span in div.findAll("span", attrs={"class": "location"}):
+            if span is list: 
+                span = span[0]
             return span.text
-        else:
+    except:
+        try:
             for span in div.findAll("div", attrs={"class": "location"}):
+                if span is list: 
+                    span = span[0]
                 return span.text
+        except:
+            return "NOT_FOUND"
     return "NOT_FOUND"
+
 
 
 # extract job title
@@ -337,7 +345,11 @@ def scrape_indeed(input_dict, max_results_per_city=2000):
                 job_post.append(extract_company(div))
 
                 # grabbing location name
-                job_post.append(extract_location(div))
+                location = extract_location(div)
+                if extract_location(div) == "NOT_FOUND":
+                    job_post.append(city)
+                else:
+                    job_post.append(location)
 
                 # grabbing link
                 link = extract_link(div)
