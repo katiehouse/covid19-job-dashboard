@@ -1,1 +1,1 @@
-web: gunicorn jobs.wsgi
+web: gunicorn jobs.wsgi --timeout 100
