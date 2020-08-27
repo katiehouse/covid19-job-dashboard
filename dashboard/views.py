@@ -3,6 +3,19 @@ from services.scraper_service import *
 import json
 from services.location_service import *
 
+from celery import shared_task
+from celery_progress.backend import ProgressRecorder
+import time
+
+
+def progress_bar(seconds):
+    progress_recorder = ProgressRecorder()
+    result = 0
+    for i in range(seconds):
+        time.sleep(1)
+        result += i
+        progress_recorder.set_progress(i + 1, seconds)
+    return result
 
 def jobs(request):
     if request.method == 'POST':
@@ -13,7 +26,9 @@ def jobs(request):
         zipcode = get_city(host)
         query = 'Data Science'
     max_results = 20
-    input = {'zipcode': zipcode, 'query': query}
-    jobs = json.loads(scrape_indeed(input, max_results))
-    context = {'jobs': jobs, 'input': input}
+    scrape_input = {'zipcode': zipcode, 'query': query}
+    job_scaper = scrape_indeed.delay(scrape_input, max_results)
+    print(job_scaper)
+    jobs = json.loads(job_scaper.get())
+    context = {'jobs': jobs, 'input': scrape_input}
     return render(request, '../templates/jobs.html', context)

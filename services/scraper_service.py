@@ -135,9 +135,11 @@ def extract_fulltext(link):
         return "NOT_FOUND"
     return "NOT_FOUND"
 
+from celery import task
 
+# this decorator is all that's needed to tell celery this is a worker task
+@task
 def scrape_indeed(input_dict, max_results_per_city = 2000):
-
     city = input_dict['zipcode']
     job_qry = input_dict['query']
 
