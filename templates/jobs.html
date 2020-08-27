@@ -7,7 +7,11 @@
         $("#wait").hide();
         $('#jobform').submit(function () {
             $("#wait").show();
+            $("#jobs").hide();
         });
+    });
+    $(window).load(function () {
+        alert("hi 2");
     });
 </script>
 
@@ -40,7 +44,6 @@
 {% block jobs %}
 <section>
     <div class="album py-5 bg-light">
-        {% if show == True %}
         <div id="wait">
             <div class="d-flex flex-column align-items-center justify-content-center">
                 <div class="row">
@@ -53,7 +56,6 @@
                 </div>
             </div>
         </div>
-        {% endif %}
         <div class="container" id="jobs">
             <div class="row">
                 {% for job in jobs %}

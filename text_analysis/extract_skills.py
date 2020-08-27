@@ -1,8 +1,19 @@
 import csv
 import json
-from nltk import ngrams
+from nltk import ngrams, word_tokenize
 from pandas import json_normalize
+import nltk
+import ssl
 
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
+
+nltk.download('punkt')
+import pandas as pd
 
 def extract_skills(jobs):
     # read in skills corpus
