@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from services.scraper_service import *
 import json
+import os
+import psycopg2
 from services.location_service import *
+from .models import Query
 
 
 def jobs(request):
