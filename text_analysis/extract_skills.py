@@ -32,11 +32,11 @@ def extract_skills():
     full_text = full_text.replace('\n', ' ').lower()
     full_text = full_text.replace('&', 'and')
     
-    replacements1 = ['!', '@','#','$','%','^','[',']','{','}','\\','|','`','~','-','=']
+    replacements1 = ['!', '@','#','$','%','^','[',']','{','}','\\','|','`','~','-','=', '(', ')', '.']
     for replace1 in replacements1:
         full_text = full_text.replace(replace1, '')
     
-    replacements1 = ['!', ',','_','/',':',';','?','<','>', '.']
+    replacements1 = ['!', ',','_','/',':',';','?','<','>']
     for replace1 in replacements1:
         full_text = full_text.replace(replace1, ' ')
 
@@ -56,12 +56,12 @@ def extract_skills():
     skills = [x.lower() for x in skills]
     for i in range(len(skills)):
         skills[i] = skills[i].replace('&', 'and')
-    replacements1 = ['!', '@','#','$','%','^','[',']','{','}','\\','|','`','~','-','=']
+    replacements1 = ['!', '@','#','$','%','^','[',']','{','}','\\','|','`','~','-','=', '(', ')', '.']
     for i in range(len(skills)):
         for replace1 in replacements1:
             skills[i] = skills[i].replace(replace1, '')
     
-    replacements1 = ['!', ',','_','/',':',';','?','<','>', '.']
+    replacements1 = ['!', ',','_','/',':',';','?','<','>']
     for i in range(len(skills)):
         for replace1 in replacements1:
             skills[i] = skills[i].replace(replace1, ' ')
