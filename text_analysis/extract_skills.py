@@ -48,19 +48,16 @@ def extract_skills():
 
     skills = [x.lower() for x in skills]
     skill_dict = {}
-    for word in word_tokenize(full_text):
-        word = word.lower()
-        if word in skill_dict:
-            skill_dict[word] += 1
-        else:
-            skill_dict[word] = 1
-
-    for word in ngrams(full_text.split(), 2):
-        word = word[0]+' '+word[1].lower()
-        if word in skill_dict:
-            skill_dict[word] += 1
-        else:
-            skill_dict[word] = 1
+    for i in range(1,6):
+        for word in ngrams(full_text.split(), i):
+            if i == 1:
+                word = ''.join(word).lower()
+            else:
+                word = ' '.join(word).lower()
+            if word in skill_dict:
+                skill_dict[word] += 1
+            else:
+                skill_dict[word] = 1
     
     
     skill_dict = dict((key,value) for key, value in skill_dict.items() if key in skills)
