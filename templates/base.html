@@ -4,7 +4,7 @@
 {% load bootstrap4 %}
 {# Load CSS and JavaScript #}
 {% bootstrap_css %}
-
+{% load static %}
 
 {% bootstrap_javascript jquery='full' %}
 
@@ -14,8 +14,10 @@
 <div class="container-full-bg">
   <section class="jumbotron text-center">
     <!--  <div class="p-3 mb-2 bg-dark text-white"> -->
-    <h1 class="display-4">Job Lens</h1>
-    <p class="lead text-muted">Detangling the Job Web</p>
+    <!-- <h1 class="display-4">Job Lens</h1> -->
+
+    <h1> <img src="{% static 'dashboard/logo.png' %}" alt="logo" style="width: 150px;"></h1>
+    <p class="lead" style="color:white">Detangling the Job Web</p>
     {% block query %}{% endblock %}
     <!--  </div> -->
   </section>
