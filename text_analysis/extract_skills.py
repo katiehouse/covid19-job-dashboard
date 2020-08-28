@@ -15,6 +15,7 @@ else:
 nltk.download('punkt')
 import pandas as pd
 
+
 def extract_skills(jobs):
     # read in skills corpus
     with open('text_analysis/linked_in_skills.csv') as f:
@@ -22,7 +23,7 @@ def extract_skills(jobs):
         skills = list(reader)
 
     # convert skills to list of strings
-    skills = [''.join(skill) for skill in skills] 
+    skills = [''.join(skill) for skill in skills]
 
     # read in .json
     # with open('text_analysis/indeed.json') as f:
@@ -41,12 +42,13 @@ def extract_skills(jobs):
     # data cleaning
     full_text = full_text.replace('\n', ' ').lower()
     full_text = full_text.replace('&', 'and')
-    
-    replacements1 = ['!', '@','$','%','^','[',']','{','}','\\','|','`','~','-','=', '(', ')', '.']
+
+    replacements1 = ['!', '@', '$', '%', '^', '[', ']',
+                     '{', '}', '\\', '|', '`', '~', '-', '=', '(', ')', '.']
     for replace1 in replacements1:
         full_text = full_text.replace(replace1, '')
-    
-    replacements1 = ['!', ',','_','/',':',';','?','<','>']
+
+    replacements1 = ['!', ',', '_', '/', ':', ';', '?', '<', '>']
     for replace1 in replacements1:
         full_text = full_text.replace(replace1, ' ')
 
@@ -69,12 +71,13 @@ def extract_skills(jobs):
     skills = [x.lower() for x in skills]
     for i in range(len(skills)):
         skills[i] = skills[i].replace('&', 'and')
-    replacements1 = ['!', '@','$','%','^','[',']','{','}','\\','|','`','~','-','=', '(', ')', '.']
+    replacements1 = ['!', '@', '$', '%', '^', '[', ']',
+                     '{', '}', '\\', '|', '`', '~', '-', '=', '(', ')', '.']
     for i in range(len(skills)):
         for replace1 in replacements1:
             skills[i] = skills[i].replace(replace1, '')
-    
-    replacements1 = ['!', ',','_','/',':',';','?','<','>']
+
+    replacements1 = ['!', ',', '_', '/', ':', ';', '?', '<', '>']
     for i in range(len(skills)):
         for replace1 in replacements1:
             skills[i] = skills[i].replace(replace1, ' ')
@@ -87,7 +90,7 @@ def extract_skills(jobs):
         skill = ' '.join(skill)
         skills_truncated.append(skill)
     skills = skills_truncated
-    
+
     df = pd.DataFrame()
     df['skills_raw'] = skills_raw
     df['skills'] = skills
@@ -95,7 +98,7 @@ def extract_skills(jobs):
     df.to_csv('text_analysis/df_test.csv')
 
     skill_dict = {}
-    for i in range(1,6):
+    for i in range(1, 6):
         for word in ngrams(full_text.split(), i):
             if i == 1:
                 word = ''.join(word).lower()
@@ -105,10 +108,10 @@ def extract_skills(jobs):
                 skill_dict[word] += 1
             else:
                 skill_dict[word] = 1
-    
-    
-    skill_dict = dict((key,value) for key, value in skill_dict.items() if key in skills)
-    
+
+    skill_dict = dict((key, value)
+                      for key, value in skill_dict.items() if key in skills)
+
     temp_list = []
     for key, value in skill_dict.items():
         skill_raw = df[df['skills'] == key].iloc[0, 0]
@@ -120,9 +123,7 @@ def extract_skills(jobs):
 
 def get_top_ten_skills(jobs):
     skill_dict = extract_skills(jobs)
-    sort_skills = sorted(skill_dict, key = lambda k:k['value'], reverse = True)
+    sort_skills = sorted(skill_dict, key=lambda k: k['value'], reverse=True)
     top_10 = sort_skills[:20]
     print(top_10)
     return top_10
-
-
