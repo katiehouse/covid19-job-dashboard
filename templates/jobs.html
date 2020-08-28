@@ -2,6 +2,10 @@
 {% block query %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <style>
+    body {
+        background-color: #002F6C !important;
+    }
+
     .jumbotron {
         background-color: #002F6C;
         padding: 1rem 15rem;
@@ -14,6 +18,8 @@
     }
 
     .alert {
+        background-color: white !important;
+
             {
             #border-radius: 0px;
             #
@@ -33,11 +39,6 @@
             #border: 4px solid !important;
             #
         }
-
-            {
-            #background-color: white !important;
-            #
-        }
     }
 
     .badge-secondary {
@@ -46,7 +47,8 @@
     }
 
     .badge-pill {
-        border-radius: 0rem;
+        /* border-radius: 0rem; */
+        font-size: 85% !important;
     }
 
     .badge-light {
@@ -75,6 +77,12 @@
     .mb-3 {
         margin-left: 110px;
     }
+
+
+    .progress {
+        /* margin: 10px; */
+        width: 500px;
+    }
 </style>
 <script>
     $(document).ready(function () {
@@ -82,6 +90,18 @@
         $('#jobform').submit(function () {
             $("#wait").show();
             $("#jobs").hide();
+            $(function () {
+                var current_progress = 0;
+                var interval = setInterval(function () {
+                    current_progress += 5;
+                    $("#dynamic")
+                        .css("width", current_progress + "%")
+                        .attr("aria-valuenow", current_progress)
+                        .text(current_progress + "% Complete");
+                    if (current_progress >= 100)
+                        clearInterval(interval);
+                }, 1000);
+            });
         });
     });
 </script>
@@ -98,7 +118,7 @@
 {% endblock %}
 {% block tokens %}
 <section>
-    <div class="row">
+    <div class="row" style="background-color:white">
         <div class="col-1"></div>
         <div class="col-10">
             <div class="alert" role="alert">
@@ -121,12 +141,25 @@
         <div id="wait">
             <div class="d-flex flex-column align-items-center justify-content-center">
                 <div class="row">
-                    <div class="spinner-border text-primary" style="width: 5rem; height: 5rem;" role="status">
+                    <strong style="color: white; padding-right:5px;">Loading Jobs from Indeed</strong>
+                    <div class="spinner-border text-primary" role="status">
                         <span class="sr-only">Loading...</span>
                     </div>
+                    <!-- <div class="spinner-border text-primary" style="width: 5rem; height: 5rem;" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div> -->
                 </div>
-                <div class="row">
-                    <strong style="color: white">Loading Jobs from Indeed</strong>
+                <div class="row" style="padding-top:10px;">
+                    <!-- <div id="progress">
+                        <span class="progress-text"></span>
+                        <div class="progress-bar"></div>
+                    </div> -->
+                    <div class="progress">
+                        <div id="dynamic" class="progress-bar progress-bar-success progress-bar-striped active"
+                            role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            <span id="current-progress"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

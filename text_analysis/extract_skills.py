@@ -1,3 +1,4 @@
+import time
 import csv
 import json
 from nltk import ngrams, word_tokenize
@@ -43,6 +44,7 @@ def extract_skills(jobs):
     full_text = full_text.replace('\n', ' ').lower()
     full_text = full_text.replace('&', 'and')
 
+    start_time = time.time()
     replacements1 = ['!', '@', '$', '%', '^', '[', ']',
                      '{', '}', '\\', '|', '`', '~', '-', '=', '(', ')', '.']
     for replace1 in replacements1:
@@ -51,23 +53,23 @@ def extract_skills(jobs):
     replacements1 = ['!', ',', '_', '/', ':', ';', '?', '<', '>']
     for replace1 in replacements1:
         full_text = full_text.replace(replace1, ' ')
-
     # create empty skills dictionary
     # if the skill exists in the job descriptions,
     # increment the frequency count in the dictionary
-# older code
-#     skill_dict = {}
-#     for word in skills:
-#         if ' ' + word.lower() + ' ' in full_text:
-#             if word in skill_dict:
-#                 skill_dict[word] += 1
-#             else:
-#                 skill_dict[word] = 1
-# older code end
+    # older code
+    #     skill_dict = {}
+    #     for word in skills:
+    #         if ' ' + word.lower() + ' ' in full_text:
+    #             if word in skill_dict:
+    #                 skill_dict[word] += 1
+    #             else:
+    #                 skill_dict[word] = 1
+    # older code end
 
     skills_raw = skills
 
     # data cleaning for skills
+    start_time = time.time()
     skills = [x.lower() for x in skills]
     for i in range(len(skills)):
         skills[i] = skills[i].replace('&', 'and')
@@ -96,9 +98,10 @@ def extract_skills(jobs):
     df['skills'] = skills
 
     df.to_csv('text_analysis/df_test.csv')
+    start_time = time.time()
 
     skill_dict = {}
-    for i in range(1, 6):
+    for i in range(1, 3):
         for word in ngrams(full_text.split(), i):
             if i == 1:
                 word = ''.join(word).lower()
@@ -109,9 +112,12 @@ def extract_skills(jobs):
             else:
                 skill_dict[word] = 1
 
+    start_time = time.time()
     skill_dict = dict((key, value)
                       for key, value in skill_dict.items() if key in skills)
+    print("lines 119", time.time() - start_time)
 
+    start_time = time.time()
     temp_list = []
     for key, value in skill_dict.items():
         skill_raw = df[df['skills'] == key].iloc[0, 0]
@@ -124,6 +130,5 @@ def extract_skills(jobs):
 def get_top_ten_skills(jobs):
     skill_dict = extract_skills(jobs)
     sort_skills = sorted(skill_dict, key=lambda k: k['value'], reverse=True)
-    top_10 = sort_skills[:20]
-    print(top_10)
+    top_10 = sort_skills[:30]
     return top_10
