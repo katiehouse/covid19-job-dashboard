@@ -8,6 +8,5 @@ source .venv/bin/activate
 
 # Run the Django app locally
 pip install -r requirements.txt
-cd jobs
 python manage.py runserver
 ```
