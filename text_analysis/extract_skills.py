@@ -97,7 +97,6 @@ def extract_skills(jobs):
     df['skills_raw'] = skills_raw
     df['skills'] = skills
 
-    df.to_csv('text_analysis/df_test.csv')
     start_time = time.time()
 
     skill_dict = {}
