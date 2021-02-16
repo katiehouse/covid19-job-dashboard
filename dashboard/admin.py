@@ -6,8 +6,7 @@ from .models import Skill
 from .models import Query
 from .models import Job
 from .models import Query_Job
-from .models import Client_Skill
-from .models import Job_Skill
+from .models import Query_Skill
 
 
 admin.site.register(Zip)
@@ -17,5 +16,4 @@ admin.site.register(Skill)
 admin.site.register(Query)
 admin.site.register(Job)
 admin.site.register(Query_Job)
-admin.site.register(Client_Skill)
-admin.site.register(Job_Skill)
+admin.site.register(Query_Skill)

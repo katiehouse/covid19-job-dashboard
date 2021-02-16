@@ -34,7 +34,7 @@ class Skill(models.Model):
 class Query(models.Model):
     query_content = models.CharField(max_length=200)
     query_timestamp = models.DateTimeField()
-    
+    query_location = models.CharField(max_length=200)
     client_id = models.ForeignKey(Client, on_delete=models.CASCADE)
 
 class Job(models.Model):
@@ -55,16 +55,7 @@ class Query_Job(models.Model):
     job_id = models.ForeignKey(Job, on_delete= models.CASCADE)
     query_id = models.ForeignKey(Query, on_delete= models.CASCADE)
 
-
-class Client_Skill(models.Model):
+class Query_Skill(models.Model):
     skill_id = models.ForeignKey(Skill, on_delete= models.CASCADE)
-    client_id = models.ForeignKey(Client, on_delete= models.CASCADE)
+    query_id = models.ForeignKey(Query, on_delete= models.CASCADE)
 
-class Job_Skill(models.Model):
-    skill_id = models.ForeignKey(Skill, on_delete= models.CASCADE)
-    job_id = models.ForeignKey(Job, on_delete= models.CASCADE)
-
-
-
-
-# Create your models here.
